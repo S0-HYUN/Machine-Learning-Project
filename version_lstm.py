@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 import time
+## 강남과 강북 데이터
 df = pd.read_csv("separate_SGG_NS2.csv",index_col=[0])
-
 df_gangnam = df.loc[df.SGG == '강남']
 df_gangbuk = df.loc[df.SGG == '강북']
 df_gangnam.pop('SGG')
@@ -12,6 +12,7 @@ df=df_gangnam  ####### 여기 수정해서 돌리기
 
 np.random.seed(1004)
 
+## 대로와 구 데이터
 # df = pd.read_csv("separate_SGG_DG.csv",index_col=[0])
 # df_daro = df.loc[df.SGG == '대로']
 # df_gu = df.loc[df.SGG == '구']
@@ -24,7 +25,7 @@ np.random.seed(1004)
 date_time = pd.to_datetime(df.pop('DATE'), format='%Y.%m.%d %H:%M:%S')
 ##########################################################################################################################
 ##########################################################################################################################
-# 데이터 분할 ## 여기 숫자 수정예정!!
+# 데이터 분할
 column_indices = {name: i for i, name in enumerate(df.columns)}
 
 n = len(df)
@@ -150,8 +151,10 @@ WindowGenerator.train = train
 WindowGenerator.val = val
 WindowGenerator.test = test
 WindowGenerator.example = example
-wide_window = WindowGenerator(input_width=365, label_width=1, shift=0, label_columns=['O3']) ### label_column 수정하고
 
+wide_window = WindowGenerator(input_width=365, label_width=1, shift=0, label_columns=['O3']) ### label_column 수정
+######################################################################################################################
+## 모델 
 gru_model = tf.keras.models.Sequential([
     # Shape [batch, time, features] => [batch, time, lstm_units]
     tf.keras.layers.GRU(64, return_sequences=True),
@@ -196,7 +199,8 @@ proposed_model = tf.keras.models.Sequential([
     tf.keras.layers.Dropout(0.3),
     tf.keras.layers.Dense(units=num_features, activation='relu'),
 ])
-
+######################################################################################################################
+## 모델 
 duration={}
 print("---------------- GRU ----------------")
 start=time.time()
